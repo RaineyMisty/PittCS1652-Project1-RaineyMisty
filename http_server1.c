@@ -66,9 +66,9 @@ handle_connection(int sock)
     }
     char filename[FILENAMESIZE];
     if (uri[0] == '/')
-        snprintf(filename, FILENAMESIZE, "%s", uri + 1);
+        snprintf(filename, FILENAMESIZE, "%.*s", FILENAMESIZE - 1, uri + 1);
     else
-        snprintf(filename, FILENAMESIZE, "%s", uri);
+        snprintf(filename, FILENAMESIZE, "%.*s", FILENAMESIZE - 1, uri);
 
     if (strlen(filename) == 0) {
         /* default to index.html if no filename provided */
@@ -177,7 +177,7 @@ main(int argc, char ** argv)
         /* handle connections */
         ret = handle_connection(sock);
 
-		// (void)ret; // DELETE ME
+		(void)ret; // DELETE ME
     }
 
     close(listen_sock);
