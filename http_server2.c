@@ -80,7 +80,7 @@ handle_connection(int sock)
     write(sock, response, strlen(response));
 
     /* close socket and free space */
-  close(socket)
+    close(sock );
     return 0;
 }
 
@@ -90,8 +90,10 @@ int
 main(int argc, char ** argv)
 {
     int server_port = -1;
-    int ret         =  0;
-    int sock        = -1;
+    int ret = 0;
+    // int sock = -1;
+    int listen_sock = -1;
+
 
     /* parse command line args */
     if (argc != 2) {
@@ -144,8 +146,8 @@ main(int argc, char ** argv)
     printf("Server listening on port %d\n", server_port);
 
     // 初始化存放客户端 socket 的数组
-    int client_fds[MAX_CONNECTIONS];
-    for (int i = 0; i < MAX_CONNECTIONS; i++) {
+    int client_fds[FD_SETSIZE];
+    for (int i = 0; i < FD_SETSIZE; i++) {
         client_fds[i] = -1;
     }
 
@@ -160,7 +162,7 @@ main(int argc, char ** argv)
         FD_SET(listen_sock, &readfds);
         
         // 将所有已连接的客户端 socket 加入读集合
-        for (int i = 0; i < MAX_CONNECTIONS; i++) {
+        for (int i = 0; i < FD_SETSIZE; i++) {
             int fd = client_fds[i];
             if (fd > 0) {
                 FD_SET(fd, &readfds);
@@ -187,7 +189,7 @@ main(int argc, char ** argv)
             } else {
                 // 将新连接加入到 client_fds 数组中
                 int added = 0;
-                for (int i = 0; i < MAX_CONNECTIONS; i++) {
+                for (int i = 0; i < FD_SETSIZE; i++) {
                     if (client_fds[i] < 0) {
                         client_fds[i] = new_sock;
                         added = 1;
@@ -205,7 +207,7 @@ main(int argc, char ** argv)
         }
         
         /* 对所有已建立连接的 socket 检查是否有可读数据 */
-        for (int i = 0; i < MAX_CONNECTIONS; i++) {
+        for (int i = 0; i < FD_SETSIZE; i++) {
             int sock = client_fds[i];
             if (sock > 0 && FD_ISSET(sock, &readfds)) {
                 ret = handle_connection(sock);
