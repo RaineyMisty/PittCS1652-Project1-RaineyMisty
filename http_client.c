@@ -67,7 +67,7 @@ main(int argc, char ** argv)
 
     /* get host IP address  */
     /* Hint: use gethostbyname() */
-    struct hostent *host = gethostbymane(server_name);
+    struct hostent *host = gethostbyname(server_name);
     if(host == NULL) {
         fprintf(stderr, "Error: no such host: %s\n", server_name);
         close(sockfd);
@@ -96,7 +96,7 @@ main(int argc, char ** argv)
         close(sockfd);
         exit(-1);
     }
-    free(rqe_str);
+    free(req_str);
 
     /* wait for response (i.e. wait until socket can be read) */
     /* Hint: use select(), and ignore timeout for now. */
@@ -130,7 +130,7 @@ main(int argc, char ** argv)
         }
 
         // dynamic allocate memory
-        char *temp = realloc(response, response_size + n + 1);
+        char *temp = realloc(response, response_size + bytes_number + 1);
         if(temp == NULL) {
             perror("realloc");
             free(response);
@@ -158,7 +158,7 @@ main(int argc, char ** argv)
     // Normal reply has return code 200
     char *status_line = strtok(response, "\r\n");
     if(status_line == NULL){
-        fprintf(strerr, "Error: missing statsu line\n");
+        fprintf(stderr, "Error: missing statsu line\n");
         free(response);
         close(sockfd);
         exit(-1);
