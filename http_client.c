@@ -55,8 +55,8 @@ main(int argc, char ** argv)
      * NULL accesses to avoid compiler warnings about unused variables
      * You should delete the following lines 
      */
-    (void)server_name;
-    (void)server_port;
+    // (void)server_name;
+    // (void)server_port;
 
     /* make socket */
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
