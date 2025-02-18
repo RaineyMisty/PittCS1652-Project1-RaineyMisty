@@ -157,13 +157,13 @@ main(int argc, char ** argv)
     // Normal reply has return code 200
     char *first_line_end = strtok(response, "\r\n");
     if(first_line_end == NULL){
-        fprintf(strerr, "Error: missing statsu line\n");
+        fprintf(stderr, "Error: missing statsu line\n");
         free(response);
         close(sockfd);
         exit(-1);
     }
     size_t line_len = first_line_end - response;
-    char *status_line == malloc(line_len + 1);
+    char *status_line = malloc(line_len + 1);
     if (status_line == NULL) {
         perror("malloc");
         free(response);
