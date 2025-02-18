@@ -65,6 +65,10 @@ handle_connection(int sock)
         return -1;
     }
     char filename[FILENAMESIZE];
+    // if (uri[0] == '/')
+    //     snprintf(filename, FILENAMESIZE, "%s", uri + 1);
+    // else
+    //     snprintf(filename, FILENAMESIZE, "%s", uri);
     if (uri[0] == '/')
         snprintf(filename, FILENAMESIZE, "%.*s", FILENAMESIZE - 1, uri + 1);
     else
@@ -110,8 +114,8 @@ int
 main(int argc, char ** argv)
 {
     int server_port = -1;
-    int ret         =  0;
-    int sock        = -1;
+    int ret =  0;
+    int sock = -1;
 
     int listen_sock = -1;
     struct sockaddr_in server_addr, client_addr;
@@ -119,14 +123,14 @@ main(int argc, char ** argv)
 
     /* parse command line args */
     if (argc != 2) {
-        fprintf(stderr, "usage: http_server1 port\n");
+        fprintf(stderr, "http_server1 port\n");
         exit(-1);
     }
 
     server_port = atoi(argv[1]);
 
     if (server_port < 1500) {
-        fprintf(stderr, "INVALID PORT NUMBER: %d; can't be < 1500\n", server_port);
+        fprintf(stderr, "Invalid Port Number: %d; can't be < 1500\n", server_port);
         exit(-1);
     }
 
@@ -168,6 +172,7 @@ main(int argc, char ** argv)
     /* connection handling loop: wait to accept connection */
     while (1) {
 
+        //
         sock = accept(listen_sock, (struct sockaddr *)&client_addr, &client_addr_len);
         if (sock < 0) {
             perror("accept");

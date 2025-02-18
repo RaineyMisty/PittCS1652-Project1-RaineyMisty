@@ -152,7 +152,24 @@ main(int argc, char ** argv)
         }
     }
 
-    /* examine return code */   
+    /* examine return code */   // 不使用 strtok()，而是先定位第一行结束位置，复制状态行
+    // char *first_line_end = strstr(response, "\r\n");
+    // if (first_line_end == NULL) {
+    //     fprintf(stderr, "Malformed response: missing status line\n");
+    //     free(response);
+    //     close(sockfd);
+    //     exit(-1);
+    // }
+    // size_t line_len = first_line_end - response;
+    // char *status_line = malloc(line_len + 1);
+    // if (status_line == NULL) {
+    //     perror("malloc");
+    //     free(response);
+    //     close(sockfd);
+    //     exit(-1);
+    // }
+    // memcpy(status_line, response, line_len);
+    // status_line[line_len] = '\0';
     int http_code = 0;
     // Skip protocol version (e.g. "HTTP/1.0")
     // Normal reply has return code 200

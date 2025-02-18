@@ -45,7 +45,7 @@ handle_connection(int sock)
     /* first read loop -- get request and headers*/
     int bytes_read = read(sock, buffer, sizeof(buffer) - 1);
     if (bytes_read <= 0) {
-        /* 出错或客户端关闭连接 */
+        // 出错或客户端关闭连接
         close(sock);
         return -1;
     }
@@ -55,8 +55,41 @@ handle_connection(int sock)
     /* parse request to get file name */
 
     /* Assumption: For this project you only need to handle GET requests and filenames that contain no spaces */
-  
-    /* open and read the file */
+    // char method[16], uri[256], version[16];
+    // if (sscanf(buffer, "%15s %255s %15s", method, uri, version) != 3) {
+    //     close(sock);
+    //     return -1;
+    // }
+    // if (strcmp(method, "GET") != 0) {
+    //     /* Only GET method is supported */
+    //     close(sock);
+    //     return -1;
+    // }
+    // char filename[FILENAMESIZE];
+    // if (uri[0] == '/')
+    //     snprintf(filename, FILENAMESIZE, "%.*s", FILENAMESIZE - 1, uri + 1);
+    // else
+    //     snprintf(filename, FILENAMESIZE, "%.*s", FILENAMESIZE - 1, uri);
+
+    // if (strlen(filename) == 0) {
+    //     /* default to index.html if no filename provided */
+    //     strncpy(filename, "index.html", FILENAMESIZE);
+    //     filename[FILENAMESIZE - 1] = '\0';
+    // }
+    // // 
+    // /* open and read the file */
+    // FILE *fp = fopen(filename, "rb");
+    // if (fp == NULL) {
+    //     write(sock, notok_response, strlen(notok_response));
+    //     close(sock);
+    //     return -1;
+    // }
+    // fseek(fp, 0, SEEK_END);
+    // long filesize = ftell(fp);
+    // rewind(fp);
+    // char header[BUFSIZE];
+    // int header_len = snprintf(header, BUFSIZE, ok_response_f, filesize);
+    // write(sock, header, header_len);
   
     /* send response */
     char body[] = "Hello, world!";
@@ -97,7 +130,7 @@ main(int argc, char ** argv)
 
     /* parse command line args */
     if (argc != 2) {
-        fprintf(stderr, "usage: http_server2 port\n");
+        fprintf(stderr, "http_server2 port\n");
         exit(-1);
     }
 
@@ -160,7 +193,9 @@ main(int argc, char ** argv)
         
         // 将监听 socket 加入读集合
         FD_SET(listen_sock, &readfds);
-        
+        // for (int j = 0; j < FD_SETSIZE; j++) {
+        //     printf("DEBUG: client_fds[%d] = %d\n", j, client_fds[j]);
+        // }
         // 将所有已连接的客户端 socket 加入读集合
         for (int i = 0; i < FD_SETSIZE; i++) {
             int fd = client_fds[i];
@@ -206,18 +241,21 @@ main(int argc, char ** argv)
             }
         }
         
-        /* 对所有已建立连接的 socket 检查是否有可读数据 */
+        // 对所有已建立连接的 socket 检查是否有可读数据 */
         for (int i = 0; i < FD_SETSIZE; i++) {
             int sock = client_fds[i];
             if (sock > 0 && FD_ISSET(sock, &readfds)) {
                 ret = handle_connection(sock);
                 (void)ret;  // 生产环境可检查返回值
-                /* 处理完请求后从数组中删除该 socket */
+                
+                // /*处理完请求后从数组中删除该 socket */
                 client_fds[i] = -1;
             }
         }
+    
     }
 
+    // close(sock);
     close(listen_sock);
     return 0;
 }
