@@ -113,6 +113,10 @@ main(int argc, char ** argv)
     int ret         =  0;
     int sock        = -1;
 
+    int listen_sock = -1;
+    struct sockaddr_in server_addr, client_addr;
+    socklen_t client_addr_len = sizeof(client_addr);
+
     /* parse command line args */
     if (argc != 2) {
         fprintf(stderr, "usage: http_server1 port\n");
