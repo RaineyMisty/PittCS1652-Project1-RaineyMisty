@@ -153,22 +153,34 @@ main(int argc, char ** argv)
     }
 
     /* examine return code */   
-    int http_code = 0;
     // Skip protocol version (e.g. "HTTP/1.0")
     // Normal reply has return code 200
-    char *status_line = strtok(response, "\r\n");
-    if(status_line == NULL){
+    char *first_line_end = strtok(response, "\r\n");
+    if(first_line_end == NULL){
         fprintf(strerr, "Error: missing statsu line\n");
         free(response);
         close(sockfd);
         exit(-1);
     }
-    if (sscanf(status_line, "HTTP/%*s %d", &http_code) != 1){ // %*s will not save
-        fprintf(stderr, "Error: fale  to parse HTTP status code\n");
+    size_t line_len = first_line_end - response;
+    char *status_line == malloc(line_len + 1);
+    if (status_line == NULL) {
+        perror("malloc");
         free(response);
         close(sockfd);
         exit(-1);
     }
+    memcpy(status_line, response, line_len);
+    status_line[line_len] = '\0';
+
+    int http_code = 0;
+    if (sscanf(status_line, "HTTP/%*s %d", &http_code) != 1){ // %*s will not save
+        fprintf(stderr, "Error: fale to parse HTTP status code\n");
+        free(response);
+        close(sockfd);
+        exit(-1);
+    }
+    free(status_line);
 
     /* print first part of response: header, error code, etc. */
     char *body = strstr(response, "\r\n\r\n");
